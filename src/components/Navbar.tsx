@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Layers, Menu, Moon, Search, Sun, X, LogOut, User, LayoutDashboard, Settings, ChevronDown } from 'lucide-react';
+import { Menu, Moon, Search, Sun, X, LogOut, User, LayoutDashboard, Settings, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/hooks/use-theme';
 import { useAuth } from '@/context/auth-context';
@@ -67,9 +67,7 @@ export function Navbar() {
         )}
       >
         <Link to="/" className="flex shrink-0 items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent shadow-glow">
-            <Layers className="h-5 w-5 text-white" />
-          </span>
+          <img src="/Logo.png" alt="Stackorium logo" className="h-9 w-9 rounded-xl object-cover shadow-glow" />
           <span className="text-lg font-extrabold tracking-tight">
             Stack<span className="text-gradient-primary">orium</span>
           </span>
@@ -164,8 +162,6 @@ export function Navbar() {
                     <Link to="/profile" className="flex items-center gap-2">
                       <User className="h-4 w-4" /> Profile
                     </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut} className="flex items-center gap-2 text-destructive focus:text-destructive">

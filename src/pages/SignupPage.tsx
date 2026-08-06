@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Github, Layers, Mail, Lock, User } from 'lucide-react';
+import { ArrowRight, Github, Mail, Lock, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { signUp, signInWithOAuth } from '@/services/auth';
 import { useAuth } from '@/context/auth-context';
@@ -49,9 +49,7 @@ export function SignupPage() {
       <div className="rounded-3xl border border-border bg-card p-8 shadow-premium">
         <div className="mb-8 text-center">
           <Link to="/" className="inline-flex items-center gap-2.5">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent shadow-glow">
-              <Layers className="h-5 w-5 text-white" />
-            </span>
+            <img src="/Logo.png" alt="Stackorium logo" className="h-10 w-10 rounded-xl object-cover shadow-glow" />
           </Link>
           <h1 className="mt-4 text-2xl font-bold tracking-tight">Create your account</h1>
           <p className="mt-2 text-sm text-muted-foreground">Start tracking your learning journey</p>

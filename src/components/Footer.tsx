@@ -1,6 +1,4 @@
 import { Link } from 'react-router-dom';
-import { Layers } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 const footerColumns = [
   {
@@ -35,9 +33,7 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div className="col-span-2">
             <Link to="/" className="flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent shadow-glow">
-                <Layers className="h-5 w-5 text-white" />
-              </span>
+              <img src="/Logo.png" alt="Stackorium logo" className="h-9 w-9 rounded-xl object-cover shadow-glow" />
               <span className="text-lg font-extrabold tracking-tight">
                 Stack<span className="text-gradient-primary">orium</span>
               </span>

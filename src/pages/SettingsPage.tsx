@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Github, Layers, Linkedin, LogOut, Save } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, LogOut, Save } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { updateProfile, signOut } from '@/services/auth';
 import { Button } from '@/components/ui/button';
@@ -62,9 +62,7 @@ export function SettingsPage() {
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8">
       <Reveal>
         <div className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent shadow-glow">
-            <Layers className="h-5 w-5 text-white" />
-          </span>
+          <img src="/Logo.png" alt="Stackorium logo" className="h-9 w-9 rounded-xl object-cover shadow-glow" />
           <h1 className="text-2xl font-extrabold tracking-tight">Account Settings</h1>
         </div>
       </Reveal>
