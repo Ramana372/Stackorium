@@ -1,349 +1,738 @@
 ## Introduction to Spring Boot
 
-Spring Boot is an opinionated extension of the Spring Framework that eliminates boilerplate configuration and lets you build production-ready applications with minimal setup. With auto-configuration, embedded servers, and starter dependencies, you can go from zero to a running REST API in minutes.
+Spring Boot is a powerful framework for building production-ready Spring-based applications with minimal configuration. It simplifies the development of stand-alone, production-grade applications by providing a convention-over-configuration approach, embedded servers, and auto-configuration capabilities.
 
 ### Why Choose Spring Boot?
 
-- **Auto-Configuration**: Sensible defaults configure Spring based on the dependencies on your classpath
-- **Embedded Servers**: Ship a runnable JAR with Tomcat/Netty built in — no external server needed
-- **Starter Dependencies**: Curated dependency bundles (`spring-boot-starter-web`, etc.) simplify Maven/Gradle setup
-- **Production-Ready**: Built-in health checks, metrics, and monitoring via Actuator
-- **Convention Over Configuration**: Minimal XML, mostly annotations and application properties
-- **Massive Community**: The default choice for building Java microservices
+- **Rapid Development**: Get started quickly with minimal configuration
+- **Production-Ready**: Built-in features for monitoring, health checks, and metrics
+- **Microservices**: Perfect for building microservices architectures
+- **Auto-Configuration**: Automatically configures Spring application based on dependencies
+- **Embedded Servers**: Run applications without external server deployment
+- **Spring Ecosystem**: Full access to Spring Framework features and libraries
 
 ### Key Features
 
-- **Spring Boot Starters**: Pre-packaged dependency sets for common use cases
-- **Auto-Configuration**: Automatically configures beans based on classpath contents
-- **Embedded Servlet Containers**: Tomcat, Jetty, or Undertow bundled into the app
-- **Spring Boot Actuator**: Production monitoring endpoints out of the box
-- **Externalized Configuration**: `application.properties`/`application.yml`, profiles, environment variables
-- **DevTools**: Automatic restarts and live reload during development
+- **Starter Dependencies**: Pre-configured dependency sets for common use cases
+- **Embedded Servers**: Tomcat, Jetty, or Undertow embedded by default
+- **Auto-Configuration**: Automatic configuration based on classpath
+- **Actuator**: Production-ready features for monitoring and management
+- **Spring Boot CLI**: Command-line tool for rapid prototyping
+- **DevTools**: Development-time features like automatic restart and live reload
+- **Externalized Configuration**: Configure applications via properties or YAML
+- **Spring Data Integration**: Simplified database access and ORM
 
 ## Installation
 
-### Creating a New Project
+### Prerequisites
 
 ```bash
-# Using Spring Initializr via curl
-curl https://start.spring.io/starter.zip \
-  -d dependencies=web,data-jpa,postgresql,validation,actuator \
-  -d javaVersion=21 \
-  -d type=maven-project \
-  -d name=my-app \
-  -o my-app.zip
+# Check Java version (requires Java 17 or later)
+java -version
 
-unzip my-app.zip -d my-app
+# Install Java if needed
+# Windows (using Chocolatey)
+choco install openjdk17
+
+# macOS (using Homebrew)
+brew install openjdk@17
+
+# Linux (Ubuntu/Debian)
+sudo apt update
+sudo apt install openjdk-17-jdk
+```
+
+### Spring Boot CLI Installation
+
+```bash
+# Windows (using Chocolatey)
+choco install springboot
+
+# macOS (using Homebrew)
+brew tap spring-io/tap
+brew install spring-boot
+
+# Linux (using SDKMAN)
+curl -s "https://get.sdkman.io" | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+sdk install springboot
+
+# Verify installation
+spring --version
+```
+
+### IDE Setup
+
+**IntelliJ IDEA:**
+- Download from https://www.jetbrains.com/idea/
+- Spring Boot plugin included by default
+- Ultimate Edition recommended for full Spring support
+
+**Visual Studio Code:**
+```bash
+# Install VS Code
+# Add Spring Boot Extension Pack from marketplace
+# Extensions: Spring Boot Tools, Spring Initializr, Spring Boot Dashboard
+```
+
+**Eclipse STS (Spring Tool Suite):**
+- Download from https://spring.io/tools
+- Pre-configured with Spring Boot support
+
+## Creating a Spring Boot Project
+
+### Using Spring Initializr (Recommended)
+
+**Web Interface:**
+1. Visit https://start.spring.io/
+2. Configure project:
+   - Project: Maven or Gradle
+   - Language: Java
+   - Spring Boot Version: 3.2.x (latest stable)
+   - Group: com.example
+   - Artifact: demo
+   - Packaging: Jar
+   - Java Version: 17 or 21
+3. Add Dependencies (e.g., Spring Web, Spring Data JPA)
+4. Generate and download the project
+
+**Command Line:**
+```bash
+# Using Spring Boot CLI
+spring init --dependencies=web,data-jpa,mysql my-app
 cd my-app
 
-# Or use https://start.spring.io in a browser
-
-# Run the application
-./mvnw spring-boot:run
+# Using curl
+curl https://start.spring.io/starter.zip \
+  -d dependencies=web,data-jpa,mysql \
+  -d name=my-app \
+  -d packageName=com.example.myapp \
+  -o my-app.zip
+unzip my-app.zip
+cd my-app
 ```
 
-### Requirements
+### Maven Project Structure
 
-```bash
-# Verify Java is installed (Spring Boot 3.x requires Java 17+)
-java --version
-
-# Verify Maven wrapper works
-./mvnw --version
+```
+my-app/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── example/
+│   │   │           └── myapp/
+│   │   │               ├── MyAppApplication.java
+│   │   │               ├── controller/
+│   │   │               ├── service/
+│   │   │               ├── repository/
+│   │   │               └── model/
+│   │   └── resources/
+│   │       ├── application.properties
+│   │       ├── static/
+│   │       └── templates/
+│   └── test/
+│       └── java/
+├── pom.xml
+└── mvnw (Maven Wrapper)
 ```
 
-## Getting Started
+## Basic Spring Boot Application
+
+### Main Application Class
 
 ```java
-// Application.java — the entry point
+package com.example.myapp;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 @SpringBootApplication
-public class Application {
+public class MyAppApplication {
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(MyAppApplication.class, args);
     }
 }
 ```
 
-```java
-// A minimal REST controller
-@RestController
-public class HelloController {
+### Simple REST Controller
 
+```java
+package com.example.myapp.controller;
+
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api")
+public class HelloController {
+    
     @GetMapping("/hello")
-    public String hello() {
+    public String sayHello() {
         return "Hello, Spring Boot!";
     }
+    
+    @GetMapping("/hello/{name}")
+    public String sayHelloToName(@PathVariable String name) {
+        return "Hello, " + name + "!";
+    }
+    
+    @PostMapping("/greet")
+    public String greet(@RequestBody GreetingRequest request) {
+        return "Hello, " + request.getName() + "! Welcome!";
+    }
+}
+
+// Request DTO
+class GreetingRequest {
+    private String name;
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
 }
 ```
 
+### Running the Application
+
 ```bash
-# Run the app
+# Using Maven
 ./mvnw spring-boot:run
 
-# Build an executable JAR
+# Or using Gradle
+./gradlew bootRun
+
+# Or run the JAR
 ./mvnw clean package
 java -jar target/my-app-0.0.1-SNAPSHOT.jar
-```
 
-## Project Structure
-
-```
-src/
-  main/
-    java/com/example/app/
-      Application.java         -> entry point
-      controller/              -> REST controllers
-      service/                 -> business logic
-      repository/               -> data access layer
-      model/                   -> entities/domain objects
-      dto/                     -> request/response objects
-      config/                  -> configuration classes
-      exception/                -> custom exceptions & handlers
-    resources/
-      application.yml          -> configuration
-      static/                  -> static web assets
-      templates/                -> server-rendered templates
-  test/
-    java/com/example/app/      -> tests
-```
-
-## Starter Dependencies
-
-```xml
-<!-- pom.xml -->
-<dependencies>
-  <dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-web</artifactId>
-  </dependency>
-  <dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-jpa</artifactId>
-  </dependency>
-  <dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-security</artifactId>
-  </dependency>
-  <dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-validation</artifactId>
-  </dependency>
-  <dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-actuator</artifactId>
-  </dependency>
-  <dependency>
-    <groupId>org.postgresql</groupId>
-    <artifactId>postgresql</artifactId>
-    <scope>runtime</scope>
-  </dependency>
-  <dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-test</artifactId>
-    <scope>test</scope>
-  </dependency>
-</dependencies>
+# Application runs on http://localhost:8080
 ```
 
 ## Configuration
 
-### application.yml
+### application.properties
+
+```properties
+# Server Configuration
+server.port=8080
+server.servlet.context-path=/api
+
+# Application Name
+spring.application.name=my-app
+
+# Database Configuration (MySQL)
+spring.datasource.url=jdbc:mysql://localhost:3306/mydb
+spring.datasource.username=root
+spring.datasource.password=password
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# JPA/Hibernate
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+spring.jpa.properties.hibernate.format_sql=true
+
+# Logging
+logging.level.root=INFO
+logging.level.com.example.myapp=DEBUG
+logging.file.name=logs/application.log
+
+# Actuator
+management.endpoints.web.exposure.include=health,info,metrics
+management.endpoint.health.show-details=always
+```
+
+### application.yml (Alternative)
 
 ```yaml
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
 spring:
   application:
     name: my-app
-
   datasource:
-    url: jdbc:postgresql://localhost:5432/mydb
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:postgres}
-
+    url: jdbc:mysql://localhost:3306/mydb
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
-
-server:
-  port: 8080
 
 logging:
   level:
     root: INFO
-    com.example.app: DEBUG
+    com.example.myapp: DEBUG
+  file:
+    name: logs/application.log
 ```
 
-### Profiles
+## Spring Data JPA
 
-```yaml
-# application-dev.yml
-spring:
-  jpa:
-    show-sql: true
-
-# application-prod.yml
-spring:
-  jpa:
-    show-sql: false
-logging:
-  level:
-    root: WARN
-```
-
-```bash
-# Activate a profile
-java -jar app.jar --spring.profiles.active=prod
-
-# Or via environment variable
-export SPRING_PROFILES_ACTIVE=prod
-```
-
-### Type-Safe Configuration Properties
+### Entity Class
 
 ```java
-@ConfigurationProperties(prefix = "app.mail")
-public record MailProperties(String host, int port, String username) {}
-```
+package com.example.myapp.model;
 
-```yaml
-app:
-  mail:
-    host: smtp.example.com
-    port: 587
-    username: notifications@example.com
-```
+import jakarta.persistence.*;
+import lombok.Data;
+import java.time.LocalDateTime;
 
-```java
-@SpringBootApplication
-@EnableConfigurationProperties(MailProperties.class)
-public class Application { }
-```
-
-## Building a REST API
-
-```java
-@RestController
-@RequestMapping("/api/products")
-public class ProductController {
-
-    private final ProductService productService;
-
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
-
-    @GetMapping
-    public Page<Product> list(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "20") int size
-    ) {
-        return productService.findAll(PageRequest.of(page, size));
-    }
-
-    @PostMapping
-    public ResponseEntity<Product> create(@Valid @RequestBody ProductRequest request) {
-        Product created = productService.create(request);
-        return ResponseEntity
-            .created(URI.create("/api/products/" + created.getId()))
-            .body(created);
-    }
-}
-```
-
-```java
-public record ProductRequest(
-    @NotBlank String name,
-    @Positive BigDecimal price,
-    @Min(0) Integer stock
-) {}
-```
-
-## Data Access with Spring Data JPA
-
-```java
 @Entity
-public class Product {
+@Table(name = "users")
+@Data
+public class User {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank
-    private String name;
-
-    private BigDecimal price;
-    private Integer stock;
-
-    // constructors, getters, setters
-}
-
-public interface ProductRepository extends JpaRepository<Product, Long> {
-    List<Product> findByStockGreaterThan(int minStock);
-    boolean existsByName(String name);
+    
+    @Column(nullable = false, unique = true)
+    private String username;
+    
+    @Column(nullable = false, unique = true)
+    private String email;
+    
+    @Column(nullable = false)
+    private String password;
+    
+    private String firstName;
+    private String lastName;
+    
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+    
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }
 ```
 
+### Repository Interface
+
 ```java
+package com.example.myapp.repository;
+
+import com.example.myapp.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    
+    // Method naming convention queries
+    Optional<User> findByUsername(String username);
+    Optional<User> findByEmail(String email);
+    List<User> findByFirstNameContaining(String firstName);
+    
+    // Custom JPQL query
+    @Query("SELECT u FROM User u WHERE u.email = ?1")
+    Optional<User> findUserByEmail(String email);
+    
+    // Native query
+    @Query(value = "SELECT * FROM users WHERE username = :username", nativeQuery = true)
+    Optional<User> findByUsernameNative(String username);
+    
+    // Check existence
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+}
+```
+
+### Service Layer
+
+```java
+package com.example.myapp.service;
+
+import com.example.myapp.model.User;
+import com.example.myapp.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @Transactional
-public class ProductService {
-    private final ProductRepository repository;
-
-    public ProductService(ProductRepository repository) {
-        this.repository = repository;
+public class UserService {
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
-
-    public Page<Product> findAll(Pageable pageable) {
-        return repository.findAll(pageable);
+    
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);
     }
-
-    public Product create(ProductRequest request) {
-        if (repository.existsByName(request.name())) {
-            throw new DuplicateProductException(request.name());
+    
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+    
+    public User createUser(User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new RuntimeException("Username already exists");
         }
-        Product product = new Product(request.name(), request.price(), request.stock());
-        return repository.save(product);
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new RuntimeException("Email already exists");
+        }
+        return userRepository.save(user);
+    }
+    
+    public User updateUser(Long id, User userDetails) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        user.setFirstName(userDetails.getFirstName());
+        user.setLastName(userDetails.getLastName());
+        user.setEmail(userDetails.getEmail());
+        
+        return userRepository.save(user);
+    }
+    
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        userRepository.delete(user);
+    }
+}
+```
+
+### REST Controller
+
+```java
+package com.example.myapp.controller;
+
+import com.example.myapp.model.User;
+import com.example.myapp.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/users")
+@CrossOrigin(origins = "*")
+public class UserController {
+    
+    @Autowired
+    private UserService userService;
+    
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        return userService.getUserById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @GetMapping("/username/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+        return userService.getUserByUsername(username)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        try {
+            User createdUser = userService.createUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+        try {
+            User updatedUser = userService.updateUser(id, userDetails);
+            return ResponseEntity.ok(updatedUser);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        try {
+            userService.deleteUser(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
 ```
 
 ## Exception Handling
 
+### Global Exception Handler
+
 ```java
-@RestControllerAdvice
+package com.example.myapp.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+@ControllerAdvice
 public class GlobalExceptionHandler {
-
-    @ExceptionHandler(DuplicateProductException.class)
-    public ResponseEntity<ApiError> handleDuplicate(DuplicateProductException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-            .body(new ApiError(ex.getMessage()));
+    
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
+            ResourceNotFoundException ex, WebRequest request) {
+        
+        ErrorResponse error = new ErrorResponse(
+            LocalDateTime.now(),
+            HttpStatus.NOT_FOUND.value(),
+            ex.getMessage(),
+            request.getDescription(false)
+        );
+        
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = ex.getBindingResult().getFieldErrors().stream()
-            .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
-        return ResponseEntity.badRequest().body(errors);
+    
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGlobalException(
+            Exception ex, WebRequest request) {
+        
+        ErrorResponse error = new ErrorResponse(
+            LocalDateTime.now(),
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            ex.getMessage(),
+            request.getDescription(false)
+        );
+        
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
 
-public record ApiError(String message) {}
+// Custom exception
+class ResourceNotFoundException extends RuntimeException {
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
+}
+
+// Error response model
+class ErrorResponse {
+    private LocalDateTime timestamp;
+    private int status;
+    private String message;
+    private String path;
+    
+    // Constructor, getters, setters
+    public ErrorResponse(LocalDateTime timestamp, int status, String message, String path) {
+        this.timestamp = timestamp;
+        this.status = status;
+        this.message = message;
+        this.path = path;
+    }
+    
+    // Getters and setters...
+}
+```
+
+## Spring Security
+
+### Security Configuration
+
+```java
+package com.example.myapp.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+    
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            )
+            .httpBasic();
+        
+        return http.build();
+    }
+    
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
+```
+
+## Testing
+
+### Unit Test
+
+```java
+package com.example.myapp.service;
+
+import com.example.myapp.model.User;
+import com.example.myapp.repository.UserRepository;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class UserServiceTest {
+    
+    @Mock
+    private UserRepository userRepository;
+    
+    @InjectMocks
+    private UserService userService;
+    
+    @Test
+    void testGetUserById() {
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("testuser");
+        
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        
+        Optional<User> result = userService.getUserById(1L);
+        
+        assertTrue(result.isPresent());
+        assertEquals("testuser", result.get().getUsername());
+        verify(userRepository, times(1)).findById(1L);
+    }
+}
+```
+
+### Integration Test
+
+```java
+package com.example.myapp.controller;
+
+import com.example.myapp.model.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+class UserControllerIntegrationTest {
+    
+    @Autowired
+    private MockMvc mockMvc;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
+    
+    @Test
+    void testCreateUser() throws Exception {
+        User user = new User();
+        user.setUsername("newuser");
+        user.setEmail("newuser@example.com");
+        user.setPassword("password123");
+        
+        mockMvc.perform(post("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.username").value("newuser"));
+    }
+}
 ```
 
 ## Spring Boot Actuator
 
-```yaml
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health, info, metrics, prometheus
-  endpoint:
-    health:
-      show-details: always
+### Add Dependency
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
 ```
+
+### Actuator Endpoints
+
+```properties
+# Expose all actuator endpoints
+management.endpoints.web.exposure.include=*
+
+# Custom health indicators
+management.endpoint.health.show-details=always
+management.endpoint.health.show-components=always
+
+# Custom application info
+info.app.name=My Spring Boot App
+info.app.description=A production-ready Spring Boot application
+info.app.version=1.0.0
+```
+
+### Access Actuator Endpoints
 
 ```bash
 # Health check
@@ -352,149 +741,129 @@ curl http://localhost:8080/actuator/health
 # Application metrics
 curl http://localhost:8080/actuator/metrics
 
-# JVM memory metrics
-curl http://localhost:8080/actuator/metrics/jvm.memory.used
+# Environment properties
+curl http://localhost:8080/actuator/env
+
+# Application info
+curl http://localhost:8080/actuator/info
 ```
 
-## Scheduling and Async Tasks
+## Deployment
 
-```java
-@SpringBootApplication
-@EnableScheduling
-@EnableAsync
-public class Application { }
+### Create Executable JAR
 
-@Component
-public class ReportScheduler {
+```bash
+# Maven
+./mvnw clean package
 
-    @Scheduled(cron = "0 0 2 * * *") // every day at 2 AM
-    public void generateDailyReport() {
-        System.out.println("Generating report...");
-    }
+# Gradle
+./gradlew bootJar
 
-    @Scheduled(fixedRate = 60000) // every 60 seconds
-    public void healthPing() { }
-}
-
-@Service
-public class NotificationService {
-
-    @Async
-    public CompletableFuture<Void> sendEmail(String to) {
-        // long-running task runs on a separate thread
-        return CompletableFuture.completedFuture(null);
-    }
-}
+# Run the JAR
+java -jar target/my-app-0.0.1-SNAPSHOT.jar
 ```
 
-## Caching
+### Docker Deployment
 
-```java
-@SpringBootApplication
-@EnableCaching
-public class Application { }
-
-@Service
-public class ProductService {
-
-    @Cacheable("products")
-    public Product findById(Long id) {
-        return repository.findById(id).orElseThrow();
-    }
-
-    @CacheEvict(value = "products", key = "#id")
-    public void update(Long id, ProductRequest request) {
-        // update logic
-    }
-}
-```
-
-## Testing
-
-```java
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ProductControllerIntegrationTest {
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Test
-    void createsProduct() {
-        ProductRequest request = new ProductRequest("Widget", new BigDecimal("9.99"), 100);
-
-        ResponseEntity<Product> response = restTemplate.postForEntity(
-            "/api/products", request, Product.class);
-
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody().getId());
-    }
-}
-
-@DataJpaTest
-class ProductRepositoryTest {
-
-    @Autowired
-    private ProductRepository repository;
-
-    @Test
-    void findsProductsInStock() {
-        repository.save(new Product("Widget", new BigDecimal("9.99"), 10));
-        List<Product> results = repository.findByStockGreaterThan(5);
-        assertEquals(1, results.size());
-    }
-}
-```
-
-## Building a Container Image
-
+**Dockerfile:**
 ```dockerfile
-# Multi-stage Dockerfile for a Spring Boot app
-FROM eclipse-temurin:21-jdk-alpine AS builder
+FROM openjdk:17-jdk-slim
 WORKDIR /app
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-RUN ./mvnw dependency:go-offline
-COPY src ./src
-RUN ./mvnw clean package -DskipTests
-
-FROM eclipse-temurin:21-jre-alpine
-WORKDIR /app
-COPY --from=builder /app/target/*.jar app.jar
+COPY target/my-app-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
 ```
 
+**Build and Run:**
 ```bash
-# Or use Spring Boot's built-in buildpacks support
-./mvnw spring-boot:build-image
+# Build Docker image
+docker build -t my-spring-boot-app .
+
+# Run container
+docker run -p 8080:8080 my-spring-boot-app
 ```
 
 ## Best Practices
 
-- **Use starters instead of individual dependencies** to get compatible, tested version combinations
-- **Externalize all environment-specific config** via `application-{profile}.yml` and environment variables
-- **Enable Actuator health checks** for use with Kubernetes liveness/readiness probes
-- **Use DTOs (records) for request/response payloads**, never expose JPA entities directly in APIs
-- **Validate input with `@Valid` and Bean Validation annotations** at the controller boundary
-- **Write both slice tests** (`@WebMvcTest`, `@DataJpaTest`) and full integration tests (`@SpringBootTest`)
-- **Keep `ddl-auto` off `update`/`create` in production** — use a migration tool like Flyway or Liquibase instead
+### Project Structure
+
+```java
+com.example.myapp
+├── MyAppApplication.java
+├── config/          // Configuration classes
+├── controller/      // REST controllers
+├── service/         // Business logic
+├── repository/      // Data access layer
+├── model/           // Entity classes
+├── dto/             // Data Transfer Objects
+├── exception/       // Custom exceptions
+└── util/            // Utility classes
+```
+
+### Use DTOs
+
+```java
+// Request DTO
+public class UserRequest {
+    private String username;
+    private String email;
+    private String password;
+    // Getters and setters
+}
+
+// Response DTO
+public class UserResponse {
+    private Long id;
+    private String username;
+    private String email;
+    // Getters and setters
+}
+```
+
+### Validation
+
+```java
+import jakarta.validation.constraints.*;
+
+public class UserRequest {
+    @NotBlank(message = "Username is required")
+    @Size(min = 3, max = 20)
+    private String username;
+    
+    @Email(message = "Invalid email format")
+    private String email;
+    
+    @NotBlank
+    @Size(min = 8, message = "Password must be at least 8 characters")
+    private String password;
+}
+
+// In controller
+@PostMapping
+public ResponseEntity<User> createUser(@Valid @RequestBody UserRequest request) {
+    // ...
+}
+```
 
 ## Resources
 
-- **Official Documentation**: [Spring Boot Docs](https://docs.spring.io/spring-boot/documentation.html)
+- **Official Documentation**: [Spring Boot Docs](https://spring.io/projects/spring-boot)
 - **Spring Initializr**: [start.spring.io](https://start.spring.io/)
-- **Spring Boot Actuator Reference**: [Actuator Docs](https://docs.spring.io/spring-boot/reference/actuator/)
-- **Baeldung Spring Boot Guides**: [baeldung.com/spring-boot](https://www.baeldung.com/spring-boot)
+- **Spring Guides**: [spring.io/guides](https://spring.io/guides)
+- **Baeldung**: [baeldung.com/spring-boot](https://www.baeldung.com/spring-boot)
+- **Spring Boot Reference**: [Spring Boot Reference Guide](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
 
 ## Summary
 
-Spring Boot is the fastest path from idea to production-ready Java service:
+Spring Boot simplifies Java application development with:
 
-✅ Auto-configuration eliminates boilerplate setup
-✅ Embedded servers produce a single runnable JAR
-✅ Curated starters simplify dependency management
-✅ Built-in observability via Actuator health and metrics
-✅ Seamless integration with Spring Data, Security, and messaging
-✅ The default choice for Java microservices and REST APIs
+✅ Auto-configuration and starter dependencies
+✅ Embedded servers (no external deployment needed)
+✅ Production-ready features (Actuator)
+✅ Easy database integration with Spring Data
+✅ RESTful API development
+✅ Security integration
+✅ Comprehensive testing support
+✅ Microservices architecture support
 
-Master Spring Boot to ship production-ready Java backends with minimal ceremony!
+Master Spring Boot to build enterprise-grade Java applications quickly and efficiently!
