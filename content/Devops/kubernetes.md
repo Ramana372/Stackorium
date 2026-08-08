@@ -1,8 +1,26 @@
-# Kubernetes
+## Introduction to K8s
 
-## Overview
+Kubernetes (K8s) is an open-source container orchestration platform that automates the deployment, scaling, and management of containerized applications. Originally developed by Google and now maintained by the CNCF, it's the de facto standard for running containers in production at scale.
 
-Kubernetes (K8s) is an open-source container orchestration platform that automates the deployment, scaling, and management of containerized applications. It provides a framework to run distributed systems resiliently, handling scaling and failover for your applications.
+### Why Choose Kubernetes?
+
+- **Self-Healing**: Automatically restarts failed containers and replaces unhealthy nodes
+- **Auto-Scaling**: Scales applications up or down based on demand
+- **Declarative Configuration**: Describe desired state; Kubernetes handles the rest
+- **Service Discovery**: Built-in DNS and load balancing between services
+- **Rolling Updates & Rollbacks**: Zero-downtime deployments with automatic rollback on failure
+- **Portable**: Runs consistently across on-prem, cloud, and hybrid environments
+
+### Key Features
+
+- **Pods**: The smallest deployable unit, wrapping one or more containers
+- **Deployments**: Manage replica sets and rolling updates for stateless apps
+- **Services**: Stable networking endpoints for a set of pods
+- **ConfigMaps & Secrets**: Externalized configuration and sensitive data
+- **Namespaces**: Logical isolation of resources within a cluster
+- **Horizontal Pod Autoscaler**: Automatic scaling based on CPU/memory or custom metrics
+- **StatefulSets**: Ordered, stable deployment for stateful applications
+
 
 **Core Benefits:**
 - **Automated Deployment**: Self-healing, auto-scaling, and load balancing
@@ -15,6 +33,7 @@ Kubernetes (K8s) is an open-source container orchestration platform that automat
 - **Control Plane**: API Server, Scheduler, Controller Manager, etcd
 - **Worker Nodes**: Kubelet, Container Runtime, Kube Proxy
 - **Pods**: Smallest deployable units containing one or more containers
+
 
 ## Installation & Setup
 

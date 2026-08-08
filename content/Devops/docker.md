@@ -1,9 +1,26 @@
-# Docker - Container Platform
+## Introduction to Docker
 
-## Overview
-Docker is an open-source platform for developing, shipping, and running applications in containers. Containers package your application with all its dependencies, ensuring it runs consistently across different environments.
+Docker is a platform for building, shipping, and running applications inside lightweight, portable containers. Containers package an application with everything it needs to run — code, runtime, libraries, and system tools — so it behaves identically across development, testing, and production environments.
 
-**Key Benefits:**
+### Why Choose Docker?
+
+- **Consistency**: "Works on my machine" becomes "works everywhere"
+- **Lightweight**: Containers share the host OS kernel, unlike full virtual machines
+- **Fast Startup**: Containers start in seconds, not minutes
+- **Portability**: Run the same image on a laptop, a CI server, or the cloud
+- **Isolation**: Each container runs in its own isolated process space
+- **Ecosystem**: Massive library of prebuilt images via Docker Hub
+
+### Key Features
+
+- **Images & Containers**: Immutable image layers and their running instances
+- **Dockerfile**: Declarative build instructions for reproducible images
+- **Docker Compose**: Multi-container application orchestration
+- **Volumes**: Persistent storage that outlives a container's lifecycle
+- **Networking**: Isolated virtual networks for container-to-container communication
+- **Registries**: Docker Hub and private registries for storing and distributing images
+
+**Core Benefits:**
 - Package applications with all dependencies
 - Consistent environment from dev to production
 - Lightweight compared to virtual machines
