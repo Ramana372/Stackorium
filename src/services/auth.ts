@@ -99,14 +99,22 @@ export async function deleteProfileAvatar(pathOrUrl: string) {
   return { error };
 }
 
-export async function signUp(email: string, password: string, fullName?: string) {
+export async function signUp(
+  email: string,
+  password: string,
+  fullName?: string
+) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      data: { full_name: fullName },
+      data: {
+        full_name: fullName,
+      },
+      emailRedirectTo: `${window.location.origin}/auth/verify`,
     },
   });
+
   return { data, error };
 }
 

@@ -22,6 +22,7 @@ const LoginPage = lazy(() => import('@/pages/LoginPage').then((m) => ({ default:
 const ForgotPasswordPage = lazy(() => import('@/pages/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage })));
 const UpdatePasswordPage = lazy(() => import('@/pages/UpdatePasswordPage').then((m) => ({ default: m.UpdatePasswordPage })));
 const SignupPage = lazy(() => import('@/pages/SignupPage').then((m) => ({ default: m.SignupPage })));
+const VerifyEmailPage = lazy(() => import('@/pages/VerifyEmailPage').then((m) => ({ default: m.VerifyEmailPage })));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage })));
 
 function LazyFallback() {
@@ -63,6 +64,7 @@ const router = createBrowserRouter([
           { path: 'auth/forgot-password', element: withSuspense(<ForgotPasswordPage />) },
           { path: 'auth/update-password', element: withSuspense(<UpdatePasswordPage />) },
           { path: 'auth/signup', element: withSuspense(<SignupPage />) },
+          { path: 'auth/verify', element: withSuspense(<VerifyEmailPage />) },
         ],
       },
       { path: '*', element: withSuspense(<NotFoundPage />) },
