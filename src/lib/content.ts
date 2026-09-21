@@ -73,7 +73,10 @@ function buildEntries(): DocEntry[] {
   const entries: DocEntry[] = [];
 
   for (const [filePath, raw] of Object.entries(docModules)) {
-    const normalized = filePath.replace(/^\/content\//, '').replace(/\.md$/, '');
+    const normalized = filePath
+      .replace(/^\/content\//, '')
+      .replace(/\.md$/, '')
+      .toLowerCase();
     const parts = normalized.split('/');
     const category = parts[0];
 
