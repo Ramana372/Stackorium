@@ -107,5 +107,3 @@ export interface ProgressStats {
   categoryProgress: { category: string; completed: number; total: number }[];
   completionRate: number;
 }
-
-export type AuthProvider = 'google' | 'github';

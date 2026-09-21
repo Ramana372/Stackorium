@@ -100,10 +100,18 @@ export function ArticlePage() {
       return;
     }
     if (completed) {
-      await unmarkArticleCompleted(article.slug);
+      const { error } = await unmarkArticleCompleted(article.slug);
+      if (error) {
+        toast({ title: 'Unable to update progress', description: error.message, variant: 'destructive' });
+        return;
+      }
       setCompleted(false);
     } else {
-      await markArticleCompleted(article.slug, article.category);
+      const { error } = await markArticleCompleted(article.slug, article.category);
+      if (error) {
+        toast({ title: 'Unable to update progress', description: error.message, variant: 'destructive' });
+        return;
+      }
       setCompleted(true);
     }
   };
@@ -114,10 +122,18 @@ export function ArticlePage() {
       return;
     }
     if (bookmarked) {
-      await removeBookmark(article.slug);
+      const { error } = await removeBookmark(article.slug);
+      if (error) {
+        toast({ title: 'Unable to update bookmark', description: error.message, variant: 'destructive' });
+        return;
+      }
       setBookmarked(false);
     } else {
-      await addBookmark(article.slug, article.category, article.title);
+      const { error } = await addBookmark(article.slug, article.category, article.title);
+      if (error) {
+        toast({ title: 'Unable to update bookmark', description: error.message, variant: 'destructive' });
+        return;
+      }
       setBookmarked(true);
     }
   };
@@ -128,10 +144,18 @@ export function ArticlePage() {
       return;
     }
     if (favorited) {
-      await removeFavorite(article.slug);
+      const { error } = await removeFavorite(article.slug);
+      if (error) {
+        toast({ title: 'Unable to update favorite', description: error.message, variant: 'destructive' });
+        return;
+      }
       setFavorited(false);
     } else {
-      await addFavorite(article.slug, article.category, article.title);
+      const { error } = await addFavorite(article.slug, article.category, article.title);
+      if (error) {
+        toast({ title: 'Unable to update favorite', description: error.message, variant: 'destructive' });
+        return;
+      }
       setFavorited(true);
     }
   };

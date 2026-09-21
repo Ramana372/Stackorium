@@ -21,11 +21,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const refreshProfile = async () => {
-    if (!user) {
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    const currentUser = currentSession?.user ?? user;
+
+    if (!currentUser) {
       setProfile(null);
       return;
     }
-    const { data } = await getProfile(user.id);
+
+    const { data } = await getProfile(currentUser.id);
     setProfile(data);
   };
 
@@ -40,12 +44,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     const initializeAuth = async () => {
-      try {
-        await supabase.auth.initialize();
-      } catch (error) {
-        console.error('Supabase auth initialize error:', error);
-      }
-
       if (!active) return;
       const { data: { session } } = await supabase.auth.getSession();
       setSession(session);

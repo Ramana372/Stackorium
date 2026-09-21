@@ -268,8 +268,7 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
--- Grant execute on the profile function
-GRANT EXECUTE ON FUNCTION public.handle_new_user TO anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM anon, authenticated;
 
 -- ============================================================
 -- Table grants
@@ -297,22 +296,22 @@ DROP POLICY IF EXISTS "profile_images_insert" ON storage.objects;
 CREATE POLICY "profile_images_insert" ON storage.objects
   FOR INSERT TO authenticated WITH CHECK (
     bucket_id = 'profile-images'
-    AND split_part(name, '/', 1) = auth.jwt() ->> 'email'
+    AND split_part(name, '/', 1) = lower(auth.jwt() ->> 'email')
   );
 
 DROP POLICY IF EXISTS "profile_images_update" ON storage.objects;
 CREATE POLICY "profile_images_update" ON storage.objects
   FOR UPDATE TO authenticated USING (
     bucket_id = 'profile-images'
-    AND split_part(name, '/', 1) = auth.jwt() ->> 'email'
+    AND split_part(name, '/', 1) = lower(auth.jwt() ->> 'email')
   ) WITH CHECK (
     bucket_id = 'profile-images'
-    AND split_part(name, '/', 1) = auth.jwt() ->> 'email'
+    AND split_part(name, '/', 1) = lower(auth.jwt() ->> 'email')
   );
 
 DROP POLICY IF EXISTS "profile_images_delete" ON storage.objects;
 CREATE POLICY "profile_images_delete" ON storage.objects
   FOR DELETE TO authenticated USING (
     bucket_id = 'profile-images'
-    AND split_part(name, '/', 1) = auth.jwt() ->> 'email'
+    AND split_part(name, '/', 1) = lower(auth.jwt() ->> 'email')
   );

@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { Profile, AuthProvider } from '@/types';
+import type { Profile } from '@/types';
 
 export const PROFILE_IMAGES_BUCKET = 'profile-images';
 
@@ -135,16 +135,6 @@ export async function sendPasswordReset(email: string) {
 
 export async function updatePassword(password: string) {
   const { data, error } = await supabase.auth.updateUser({ password });
-  return { data, error };
-}
-
-export async function signInWithOAuth(provider: AuthProvider) {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider,
-    options: {
-      redirectTo: `${window.location.origin}/progress`,
-    },
-  });
   return { data, error };
 }
 

@@ -6,18 +6,18 @@ import { Button } from '@/components/ui/button';
 
 export function VerifyEmailPage() {
   const navigate = useNavigate();
-  const { refreshProfile } = useAuth();
+  const { user, loading } = useAuth();
   const [status, setStatus] = useState<'loading' | 'signed-in' | 'confirmed' | 'failed'>('loading');
   const [message, setMessage] = useState('Confirming your email. Please wait...');
 
   useEffect(() => {
+    if (loading) return;
+
     const verifyEmail = async () => {
       try {
-        await supabase.auth.initialize();
         const { data: { session } } = await supabase.auth.getSession();
 
-        if (session) {
-          await refreshProfile();
+        if (session || user) {
           setStatus('signed-in');
           navigate('/progress');
           return;
@@ -33,7 +33,7 @@ export function VerifyEmailPage() {
     };
 
     verifyEmail();
-  }, [navigate, refreshProfile]);
+  }, [loading, navigate, user]);
 
   return (
     <div className="mx-auto flex min-h-[calc(100vh-6rem)] max-w-xl flex-col items-center justify-center px-4 py-20 text-center">

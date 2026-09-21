@@ -9,8 +9,8 @@ import type {
 import { getAllDocEntries } from '@/lib/content';
 
 async function getUserId() {
-  const { data } = await supabase.auth.getUser();
-  return data.user?.id ?? null;
+  const { data } = await supabase.auth.getSession();
+  return data.session?.user.id ?? null;
 }
 
 function notAuthenticatedError() {
@@ -22,15 +22,12 @@ export async function markArticleCompleted(slug: string, category: string) {
   const userId = await getUserId();
   if (!userId) return { data: null, error: notAuthenticatedError() };
 
-  await supabase
-    .from('completed_articles')
-    .delete()
-    .eq('user_id', userId)
-    .eq('article_slug', slug);
-
   const { data, error } = await supabase
     .from('completed_articles')
-    .insert({ user_id: userId, article_slug: slug, category })
+    .upsert(
+      { user_id: userId, article_slug: slug, category, completed_at: new Date().toISOString() },
+      { onConflict: 'user_id,article_slug' },
+    )
     .select()
     .single();
 
@@ -87,21 +84,19 @@ export async function recordReading(
   const userId = await getUserId();
   if (!userId) return { data: null, error: notAuthenticatedError() };
 
-  await supabase
-    .from('reading_history')
-    .delete()
-    .eq('user_id', userId)
-    .eq('article_slug', slug);
-
   const { data, error } = await supabase
     .from('reading_history')
-    .insert({
-      user_id: userId,
-      article_slug: slug,
-      category,
-      title,
-      scroll_position: scrollPosition,
-    })
+    .upsert(
+      {
+        user_id: userId,
+        article_slug: slug,
+        category,
+        title,
+        scroll_position: scrollPosition,
+        read_at: new Date().toISOString(),
+      },
+      { onConflict: 'user_id,article_slug' },
+    )
     .select()
     .single();
 
@@ -139,15 +134,12 @@ export async function addBookmark(slug: string, category: string, title: string)
   const userId = await getUserId();
   if (!userId) return { data: null, error: notAuthenticatedError() };
 
-  await supabase
-    .from('bookmarks')
-    .delete()
-    .eq('user_id', userId)
-    .eq('article_slug', slug);
-
   const { data, error } = await supabase
     .from('bookmarks')
-    .insert({ user_id: userId, article_slug: slug, category, title })
+    .upsert(
+      { user_id: userId, article_slug: slug, category, title },
+      { onConflict: 'user_id,article_slug' },
+    )
     .select()
     .single();
 
@@ -199,15 +191,12 @@ export async function addFavorite(slug: string, category: string, title: string)
   const userId = await getUserId();
   if (!userId) return { data: null, error: notAuthenticatedError() };
 
-  await supabase
-    .from('favorites')
-    .delete()
-    .eq('user_id', userId)
-    .eq('article_slug', slug);
-
   const { data, error } = await supabase
     .from('favorites')
-    .insert({ user_id: userId, article_slug: slug, category, title })
+    .upsert(
+      { user_id: userId, article_slug: slug, category, title },
+      { onConflict: 'user_id,article_slug' },
+    )
     .select()
     .single();
 
